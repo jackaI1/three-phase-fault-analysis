@@ -1,0 +1,26 @@
+name: Python fault study
+on:
+  push:
+    branches: [main, 'skills/**']
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install '.[test]'
+      - run: ruff check . && ruff format --check .
+      - run: pytest --cov=three_phase_fault --cov-report=term-missing --cov-fail-under=90
+      - run: three-phase-fault examples/feeder.json --bus workshop --pickup-a 500 --plots output --output output/report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: feeder-study-python-${{ matrix.python-version }}
+          path: output/
