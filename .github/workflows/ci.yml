@@ -20,6 +20,7 @@ jobs:
       - run: ruff check . && ruff format --check .
       - run: pytest --cov=three_phase_fault --cov-report=term-missing --cov-fail-under=90
       - run: three-phase-fault examples/feeder.json --bus workshop --pickup-a 500 --plots output --output output/report.json
+      - run: python -m three_phase_fault.industrial --output output/industrial
       - uses: actions/upload-artifact@v4
         with:
           name: feeder-study-python-${{ matrix.python-version }}
