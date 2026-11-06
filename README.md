@@ -30,6 +30,16 @@ The report covers four faults. Currents below are amperes RMS, a measure of the 
 
 For just one fault, add `--fault lg`. Add `--zf 0.02 0.01` to include resistance and reactance at the fault, in that order. Use `python -m three_phase_fault --help` for all options.
 
+## Study an industrial feeder
+
+I also wanted to see how a plant's normal demand and a short circuit affect its cables and switchgear. This example models a utility supply, transformer, motor loads, cables and an isolated standby generator. It uses pandapower, an open-source analogue to ETAP, to calculate normal voltages and three-phase short-circuit currents. A load flow estimates the voltage and current while the equipment is running; a short-circuit study estimates the current when wires are accidentally connected together.
+
+```sh
+python -m three_phase_fault.industrial --output output/industrial
+```
+
+Open `output/industrial/one-line.png` for the simplified connection diagram and `report.json` for voltages, cable and transformer loading, fault currents and warnings. The deliberately undersized example flags two low-voltage buses, an overloaded cable and a breaker whose interrupting rating is too low. [Industrial study notes](docs/industrial-study.md) explain the assumptions and two hand checks. The generator is isolated and motor fault contributions are excluded, so this is a learning example, not a design for installation.
+
 ## What I calculate
 
 I use **per-unit values**, meaning quantities divided by a shared reference rating, to keep the network calculations consistent. The program converts the answer back to amperes using the power and voltage ratings in the input.
@@ -70,4 +80,4 @@ ruff check .
 ruff format --check .
 ```
 
-There are 84 tests, including published answers, independent closed-form equations, current conservation, open ground paths, input errors, relay timing and the command-line plots. GitHub Actions runs them on Python 3.11, 3.12 and 3.13 and saves the example report and plots as downloadable artifacts.
+There are 89 tests, including published answers, independent closed-form equations, current conservation, open ground paths, input errors, relay timing and the command-line plots. GitHub Actions runs them on Python 3.11, 3.12 and 3.13 and saves the example report and plots as downloadable artifacts.
